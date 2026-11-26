@@ -247,11 +247,11 @@ async function getDuckDuckGoVqd() {
   return cachedDDGVqd;
 }
 
-async function translateChunkViaDDG(chunk, targetLang) {
+async function translateChunkViaDDG(chunk, targetLang, sourceLang = 'kn') {
   let vqd = await getDuckDuckGoVqd();
   if (!vqd) throw new Error('DuckDuckGo VQD token unavailable');
 
-  const url = `https://duckduckgo.com/translation.js?vqd=${vqd}&query=translate&from=kn&to=${targetLang}`;
+  const url = `https://duckduckgo.com/translation.js?vqd=${vqd}&query=translate&from=${sourceLang}&to=${targetLang}`;
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -265,7 +265,7 @@ async function translateChunkViaDDG(chunk, targetLang) {
     // Refresh token and retry once
     cachedDDGVqd = null;
     vqd = await getDuckDuckGoVqd();
-    const retryRes = await fetch(`https://duckduckgo.com/translation.js?vqd=${vqd}&query=translate&from=kn&to=${targetLang}`, {
+    const retryRes = await fetch(`https://duckduckgo.com/translation.js?vqd=${vqd}&query=translate&from=${sourceLang}&to=${targetLang}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'text/plain;charset=UTF-8',
@@ -282,13 +282,13 @@ async function translateChunkViaDDG(chunk, targetLang) {
   return data.translated || '';
 }
 
-async function translateViaDuckDuckGo(text, targetLang) {
+async function translateViaDuckDuckGo(text, targetLang, sourceLang = 'kn') {
   if (!text || !text.trim()) return '';
   const chunks = splitIntoChunks(text, 850);
   const results = [];
 
   for (let i = 0; i < chunks.length; i++) {
-    const trans = await translateChunkViaDDG(chunks[i], targetLang);
+    const trans = await translateChunkViaDDG(chunks[i], targetLang, sourceLang);
     results.push(trans);
     if (i < chunks.length - 1) {
       await new Promise(r => setTimeout(r, 60));
@@ -301,10 +301,10 @@ async function translateViaDuckDuckGo(text, targetLang) {
 /**
  * Multi-provider translation runner with automatic fallback
  */
-async function translateText(text, targetLang) {
+async function translateText(text, targetLang, sourceLang = 'kn') {
   // 1. Primary: DuckDuckGo / Microsoft Bing Translator (Highly reliable, no IP rate-limit blocks)
   try {
-    const result = await translateViaDuckDuckGo(text, targetLang);
+    const result = await translateViaDuckDuckGo(text, targetLang, sourceLang);
     if (result && result.trim()) {
       return result;
     }
@@ -314,7 +314,7 @@ async function translateText(text, targetLang) {
 
   // 2. Secondary: Google Translate
   try {
-    const result = await translateViaGoogle(text, 'kn', targetLang);
+    const result = await translateViaGoogle(text, sourceLang, targetLang);
     if (result && result.trim()) {
       return result;
     }
@@ -324,7 +324,7 @@ async function translateText(text, targetLang) {
 
   // 3. Fallback: MyMemory
   try {
-    const result = await translateViaMyMemory(text, 'kn', targetLang);
+    const result = await translateViaMyMemory(text, sourceLang, targetLang);
     if (result && result.trim()) {
       return result;
     }
@@ -334,6 +334,20 @@ async function translateText(text, targetLang) {
 
   // 4. Fallback to offline rule dictionary
   return translateOfflineFallback(text, targetLang);
+}
+
+function polishTranslatedText(text) {
+  if (!text) return '';
+
+  return text
+    .replace(/\r\n?/g, '\n')
+    .replace(/[\t\u00a0 ]+/g, ' ')
+    .replace(/ *\n */g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/\s+([,.;:!?।])/g, '$1')
+    .replace(/([,;:!?।])(?=[^\s\d])/g, '$1 ')
+    .replace(/\.(?=[A-Z])/g, '. ')
+    .trim();
 }
 
 /**
@@ -393,10 +407,16 @@ ${text}
  * Handle Translation Request
  */
 async function handleTranslation(reqBody) {
-  let { text, targetLang = 'en', preservationMode = 'english_italics', customNames = [], geminiApiKey } = reqBody;
+  let { text, sourceLang = 'kn', targetLang = 'en', preservationMode = 'english_italics', customNames = [], geminiApiKey } = reqBody;
 
   if (!text || !text.trim()) {
     return { error: 'Please enter Kannada text to translate.' };
+  }
+
+  if (targetLang === 'dual') targetLang = 'both';
+
+  if (sourceLang && sourceLang !== 'kn') {
+    return { error: 'THEMI currently supports Kannada input only.' };
   }
 
   // Auto-detect and convert Nudi 01 k / Baraha ASCII text to standard Kannada Unicode
@@ -414,8 +434,8 @@ async function handleTranslation(reqBody) {
     try {
       const geminiResult = await translateViaGemini(text, detectedNames, preservationMode, geminiApiKey.trim());
       return {
-        english: geminiResult.english,
-        hindi: geminiResult.hindi,
+        english: polishTranslatedText(geminiResult.english),
+        hindi: polishTranslatedText(geminiResult.hindi),
         notes: geminiResult.notes,
         detectedNames,
         preservationMode,
@@ -435,8 +455,13 @@ async function handleTranslation(reqBody) {
 
   detectedNames.forEach((item) => {
     const stem = item.stem || item.clean.replace(/[\u0CBE-\u0CCC]$/, '');
-    // Word boundary: ensure name is a distinct word, not part of another word (e.g. avoid matching "ರಾಮ" inside "ಇಷಾರಾಮಿ")
-    const regex = new RegExp(`(?<=[^\\u0C80-\\u0CFF]|^)(${escapeRegex(item.clean)}|${escapeRegex(stem)}[\\u0CBE-\\u0CCC]*)(?=[^\\u0C80-\\u0CFF]|$)`, 'gu');
+    const caseSuffix = '(?:ಿ?ನಿಂದ|ಿ?ಂದ|ಗಳು|ಗಳಿಗೆ|ಕ್ಕೆ|ಿಗೆ|ಗೆ|ಇನ್ನು|ನ್ನು|ನ್ನು|ಅನ್ನು|ವನ್ನು|ರಲ್ಲಿ|ನಲ್ಲಿ|ಯಲ್ಲಿ|ಯಿಂದ|ನು|ಳು|ರು|ದು)?';
+    // Replace only the name stem; retain inflections such as -inda/-ige so translation
+    // still understands the grammatical relationship ("from Mysuru", "to Bengaluru").
+    const regex = new RegExp(
+      `(?<![\\u0C80-\\u0CFF])(${escapeRegex(item.clean)}|${escapeRegex(stem)}[\\u0CBE-\\u0CCC]*)(?=${caseSuffix}(?:[^\\u0C80-\\u0CFF]|$))`,
+      'gu'
+    );
     if (regex.test(shieldedText)) {
       const token = `XNAME${tokenIdx}`;
       shieldedText = shieldedText.replace(regex, token);
@@ -456,12 +481,12 @@ async function handleTranslation(reqBody) {
 
   if (targetLang === 'en' || targetLang === 'both' || !targetLang) {
     const rawEnglish = await translateText(shieldedText, 'en');
-    english = restoreNamesWithToken(rawEnglish, nameMap, 'en', preservationMode);
+    english = polishTranslatedText(restoreNamesWithToken(rawEnglish, nameMap, 'en', preservationMode));
   }
 
   if (targetLang === 'hi' || targetLang === 'both' || !targetLang) {
     const rawHindi = await translateText(shieldedText, 'hi');
-    hindi = restoreNamesWithToken(rawHindi, nameMap, 'hi', preservationMode);
+    hindi = polishTranslatedText(restoreNamesWithToken(rawHindi, nameMap, 'hi', preservationMode));
   }
 
   return {
@@ -524,6 +549,7 @@ async function handleAIInteraction(reqBody) {
     currentHindi,
     actionType = 'chat',
     detectedNames = [],
+    conversationHistory = [],
     geminiApiKey
   } = reqBody;
 
@@ -537,6 +563,7 @@ Current English: """${currentEnglish || ''}"""
 Current Hindi: """${currentHindi || ''}"""
 User Action/Query: "${query || actionType}"
 Detected Names: ${JSON.stringify(detectedNames)}
+Recent conversation: ${JSON.stringify(conversationHistory)}
 
 IMPORTANT USER RULE: "The names of people and places must remain the authentic Kannada names, rendered in English script with italics (e.g. *Suresh*, *Bengaluru*)."
 
@@ -601,6 +628,31 @@ Provide your response as a JSON object:
 - **Hindi**: Literary diction (उच्च साहित्यिक शैली).
 - **Names & Places**: Sacredly preserved in English script with elegant italics.`;
     suggestions.push('Restore standard tone', 'Provide line-by-line analysis');
+
+  } else if (actionType === 'simplify' || lowerQuery.includes('clear') || lowerQuery.includes('simple') || lowerQuery.includes('simplify')) {
+    revisedEnglish = makeEnglishClear(currentEnglish);
+    revisedHindi = makeHindiClear(currentHindi);
+    reply = `### ✨ Improved for Clarity
+- Removed overly dense phrasing and simplified the sentence rhythm.
+- Kept the original meaning and protected-name styling intact.
+- The result is now easier to read aloud and understand at a glance.`;
+    suggestions.push('Make it more formal', 'Give it a literary tone', 'Show 3 alternatives');
+
+  } else if (lowerQuery.includes('short') || lowerQuery.includes('concise')) {
+    revisedEnglish = makeConcise(currentEnglish);
+    revisedHindi = makeConcise(currentHindi);
+    reply = `### ✂️ Made More Concise
+- Reduced repeated and filler expressions.
+- Preserved the central message and all proper names.`;
+    suggestions.push('Keep the tone warm', 'Make it formal');
+
+  } else if (lowerQuery.includes('expand') || lowerQuery.includes('detailed') || lowerQuery.includes('explain phrase')) {
+    revisedEnglish = currentEnglish
+      ? `${currentEnglish}${/[.!?]$/.test(currentEnglish) ? '' : '.'} The meaning is expressed with its full context and natural English flow.`
+      : currentEnglish;
+    reply = `### 🖋️ Added Context
+I extended the English draft with a short contextual continuation. Review the editor preview before applying it.`;
+    suggestions.push('Make it concise', 'Use a literary tone');
 
   } else if (actionType === 'verify_names' || lowerQuery.includes('name') || lowerQuery.includes('verify')) {
     const namesList = detectedNames.map(n => `• **${n.clean}** → English Script: *${n.english}* (Status: Protected & Italicized)`).join('\n');
@@ -719,6 +771,37 @@ function makeEnglishLiterary(text) {
              .replace(/\bwent to\b/gi, 'journeyed towards')
              .replace(/\bbeautiful\b/gi, 'breathtakingly graceful')
              .replace(/\bgood\b/gi, 'splendid');
+}
+
+function makeEnglishClear(text) {
+  if (!text) return text;
+  return text
+    .replace(/\bin order to\b/gi, 'to')
+    .replace(/\bdue to the fact that\b/gi, 'because')
+    .replace(/\bat this point in time\b/gi, 'now')
+    .replace(/\bproceeded\b/gi, 'went')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+function makeHindiClear(text) {
+  if (!text) return text;
+  return text
+    .replace(/के कारण से/g, 'से')
+    .replace(/इस समय पर/g, 'अब')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+function makeConcise(text) {
+  if (!text) return text;
+  return text
+    .replace(/\bvery\s+/gi, '')
+    .replace(/\breally\s+/gi, '')
+    .replace(/\bactually\s+/gi, '')
+    .replace(/\bin fact,\s*/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
 }
 
 function makeHindiFormal(text) {
