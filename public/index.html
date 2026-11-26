@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THEMI Writing - Kannada Translation & Editorial Assistant</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✒️</text></svg>">
+  
+  <!-- Classic Typography: Cinzel, Playfair Display, Cormorant Garamond, Inter, Noto Sans Kannada & Devanagari -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Playfair Display', 'Cormorant Garamond', 'serif'],
+            editorial: ['Cormorant Garamond', 'Georgia', 'serif'],
+            script: ['Pinyon Script', 'Alex Brush', 'cursive'],
+            poetic: ['Playfair Display', 'Georgia', 'serif'],
+            brand: ['Cinzel', 'Playfair Display', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+            kannada: ['Noto Sans Kannada', 'sans-serif'],
+            hindi: ['Noto Sans Devanagari', 'sans-serif']
+          },
+          colors: {
+            classic: {
+              parchment: '#fcfbf8',
+              warmIvory: '#f7f4ed',
+              sand: '#ece7db',
+              espresso: '#1c1917',
+              charcoal: '#292524',
+              gold: '#c29b38',
+              goldLight: '#dfb758',
+              goldDark: '#937121'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- PDF.js for PDF text extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+
+  <!-- Mammoth.js for DOCX text extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#fcfbf9] dark:bg-[#121110] text-[#1c1917] dark:text-[#f5f2eb] min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- CLASSIC EDITORIAL HEADER -->
+  <header class="border-b border-[#e7e3da] dark:border-[#2a2624] bg-[#fcfbf9]/95 dark:bg-[#121110]/95 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
+      
+      <!-- Brand & Poetic Title -->
+      <div class="flex items-center space-x-4">
+        <!-- Artisan Poetic Medallion Logo -->
+        <div class="poetic-seal w-13 h-13 sm:w-14 sm:h-14 rounded-2xl border border-[#c29b38]/40 flex items-center justify-center p-1.5 cursor-pointer shadow-md shadow-[#c29b38]/10" title="THEMI Writing • Poetic Kannada Translation">
+          <svg class="w-10 h-10 sm:w-11 sm:h-11" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="themiGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#faebd7"/>
+                <stop offset="25%" stop-color="#f3d483"/>
+                <stop offset="60%" stop-color="#c59b27"/>
+                <stop offset="100%" stop-color="#7d5d11"/>
+              </linearGradient>
+            </defs>
+            <!-- Filigree Rings -->
+            <circle cx="50" cy="50" r="46" stroke="url(#themiGold)" stroke-width="1.2" stroke-dasharray="2 3" opacity="0.6"/>
+            <circle cx="50" cy="50" r="41.5" stroke="url(#themiGold)" stroke-width="1.6" opacity="0.9"/>
+            <!-- Cardinal Stars -->
+            <path d="M50 3.5 L51.5 7 L50 10.5 L48.5 7 Z" fill="url(#themiGold)"/>
+            <path d="M50 89.5 L51.5 93 L50 96.5 L48.5 93 Z" fill="url(#themiGold)"/>
+            <path d="M3.5 50 L7 51.5 L10.5 50 L7 48.5 Z" fill="url(#themiGold)"/>
+            <path d="M89.5 50 L93 51.5 L96.5 50 L93 48.5 Z" fill="url(#themiGold)"/>
+            <!-- Lyrical Feather Quill -->
+            <path d="M78 18 C63 35, 43 57, 28 82" stroke="url(#themiGold)" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M78 18 C75 26, 68 33, 58 37 C54 38, 48 36, 52 31 C58 24, 68 20, 78 18 Z" fill="url(#themiGold)" opacity="0.98"/>
+            <path d="M68 31 C60 41, 48 49, 36 55 C33 56, 28 53, 33 48 C40 42, 54 35, 68 31 Z" fill="url(#themiGold)" opacity="0.92"/>
+            <path d="M56 45 C48 55, 38 63, 28 71 C26 72, 22 69, 26 65 C32 59, 44 51, 56 45 Z" fill="url(#themiGold)" opacity="0.86"/>
+            <!-- Left Plumage -->
+            <path d="M75 20 C64 25, 56 33, 52 41 C51 43, 54 44, 57 42 C64 35, 70 28, 75 20 Z" fill="url(#themiGold)" opacity="0.85"/>
+            <path d="M62 37 C52 45, 44 53, 40 61 C39 63, 42 64, 45 62 C52 55, 58 47, 62 37 Z" fill="url(#themiGold)" opacity="0.8"/>
+            <!-- Ink Droplet -->
+            <path d="M26 84 C26 84, 23 88, 25 91 C27 94, 32 93, 33 89 C34 86, 29 84, 26 84 Z" fill="url(#themiGold)"/>
+            <!-- Calligraphic Flourish Swirl -->
+            <path d="M25 91 C31 92.5, 43 90.5, 49 84.5 C53 80.5, 50 76, 45 78.5 C40 81, 36 86, 29 88" stroke="url(#themiGold)" stroke-width="1.3" stroke-linecap="round" opacity="0.8"/>
+          </svg>
+        </div>
+
+        <div>
+          <div class="flex items-baseline gap-2">
+            <span class="font-poetic font-semibold text-2xl sm:text-3xl tracking-[0.16em] text-[#1c1917] dark:text-[#f7f4ed]">THEMI</span>
+            <span class="font-script text-3xl sm:text-4xl text-[#c29b38] dark:text-[#dfb758] font-normal leading-none transform -rotate-2 select-none">Writing</span>
+          </div>
+          <p class="text-[11px] sm:text-xs text-[#78716c] dark:text-[#a8a29e] tracking-wider font-editorial italic flex items-center gap-1.5 mt-0.5">
+            <span class="font-kannada font-medium text-[#c29b38] not-italic text-xs">ಕಾವ್ಯದ ಕಂಪು</span>
+            <span class="text-[#c29b38]/50 text-[8px]">✦</span>
+            <span>A Lyrical Bridge from Kannada into English &amp; Hindi</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Header Tools (Theme, History) -->
+      <div class="flex items-center space-x-3">
+        <!-- History Drawer Button -->
+        <button id="btnToggleHistory" class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#78716c] dark:text-[#a8a29e] hover:text-[#1c1917] dark:hover:text-white hover:bg-[#f2eee5] dark:hover:bg-[#1e1b19] border border-[#e7e3da] dark:border-[#2a2624] transition flex items-center gap-1.5" title="View Recent Translations">
+          <i data-lucide="history" class="w-3.5 h-3.5 text-[#c29b38]"></i>
+          <span class="hidden sm:inline">History</span>
+        </button>
+
+        <!-- Dark/Light Mode -->
+        <button id="btnToggleTheme" class="p-2 rounded-lg text-[#78716c] dark:text-[#a8a29e] hover:bg-[#f2eee5] dark:hover:bg-[#1e1b19] border border-[#e7e3da] dark:border-[#2a2624] transition" title="Toggle Aesthetic Theme">
+          <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-[#dfb758]"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full flex flex-col gap-8">
+
+    <!-- LANGUAGE SELECTION BAR (User Chooses Desired Language) -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#e7e3da] dark:border-[#2a2624]">
+      
+      <div class="flex items-center space-x-2">
+        <span class="text-xs font-serif uppercase tracking-widest text-[#78716c] dark:text-[#a8a29e] font-semibold">
+          Translate Into:
+        </span>
+        <div class="inline-flex rounded-xl p-1 bg-[#f2eee5] dark:bg-[#1c1917] border border-[#e7e3da] dark:border-[#2a2624]">
+          <button 
+            id="tabLangEnglish" 
+            class="lang-tab px-4 py-1.5 rounded-lg text-xs font-serif font-semibold tracking-wider transition shadow-xs bg-white dark:bg-[#292524] text-[#1c1917] dark:text-white border border-[#c29b38]/30">
+            English
+          </button>
+          <button 
+            id="tabLangHindi" 
+            class="lang-tab px-4 py-1.5 rounded-lg text-xs font-serif font-semibold tracking-wider transition text-[#78716c] dark:text-[#a8a29e] hover:text-[#1c1917] dark:hover:text-white">
+            हिन्दी (Hindi)
+          </button>
+          <button 
+            id="tabLangDual" 
+            class="lang-tab px-3 py-1.5 rounded-lg text-xs font-serif tracking-wider transition text-[#78716c] dark:text-[#a8a29e] hover:text-[#1c1917] dark:hover:text-white hidden md:inline-flex items-center gap-1">
+            <span>Dual View</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Document Upload Prompt -->
+      <div class="flex items-center space-x-2">
+        <label for="docFileInput" class="cursor-pointer inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-serif font-medium bg-[#f7f4ed] dark:bg-[#1c1917] hover:bg-[#efe9dc] dark:hover:bg-[#262320] text-[#78716c] dark:text-[#d6d3d1] border border-[#e7e3da] dark:border-[#2a2624] transition shadow-xs">
+          <i data-lucide="file-up" class="w-3.5 h-3.5 text-[#c29b38]"></i>
+          <span>Upload PDF / Word</span>
+        </label>
+        <input type="file" id="docFileInput" class="hidden" accept=".pdf,.docx,.txt,.rtf,.md">
+      </div>
+
+    </div>
+
+    <!-- TRANSLATION PANELS GRID -->
+    <div id="translationGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+      
+      <!-- LEFT PANEL: KANNADA SOURCE SCRIPT -->
+      <div class="bg-white dark:bg-[#181615] rounded-2xl shadow-sm border border-[#e7e3da] dark:border-[#2a2624] p-6 flex flex-col h-[520px] relative transition-all">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-[#f2eee5] dark:border-[#221f1d]">
+          <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-[#c29b38]"></span>
+            <h2 class="font-serif font-semibold text-sm tracking-wide text-[#1c1917] dark:text-[#f7f4ed]">
+              Kannada Script
+            </h2>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="flex items-center space-x-1">
+            <!-- Sample selector -->
+            <select id="sampleSelect" class="text-xs bg-[#f7f4ed] dark:bg-[#1e1b19] text-[#78716c] dark:text-[#a8a29e] rounded-lg px-2.5 py-1 outline-none border border-[#e7e3da] dark:border-[#2a2624] cursor-pointer font-editorial">
+              <option value="">Lyrical Samples...</option>
+              <option value="poetic_verse">Poetic Verse (Kaveri &amp; Mysuru Nature)</option>
+              <option value="names_dialogue">Dialogue with Suresh, Anand &amp; Manjunatha</option>
+              <option value="bengaluru_mysuru">Travel from Mysuru to Bengaluru</option>
+              <option value="honorific_formal">Formal Assembly &amp; Speech</option>
+              <option value="kannada_story">Chamundi Temple &amp; Sacred River</option>
+              <option value="nudi_sample">📄 Nudi 01 k Font Sample (Auto-Converts)</option>
+            </select>
+
+            <!-- Voice Input Button -->
+            <button id="btnVoiceInput" class="p-1.5 rounded-lg text-[#78716c] hover:text-[#c29b38] hover:bg-[#f7f4ed] dark:hover:bg-[#1e1b19] transition" title="Dictate Kannada (Microphone)">
+              <i data-lucide="mic" class="w-4 h-4"></i>
+            </button>
+
+            <!-- Clear Button -->
+            <button id="btnClearInput" class="p-1.5 rounded-lg text-[#78716c] hover:text-rose-500 hover:bg-[#f7f4ed] dark:hover:bg-[#1e1b19] transition" title="Clear Text">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Document Drag & Drop Notification Banner (Hidden by default) -->
+        <div id="fileUploadBanner" class="hidden my-2 px-3 py-2 bg-[#f7f4ed] dark:bg-[#1f1c1a] border border-[#c29b38]/40 rounded-xl flex items-center justify-between text-xs text-[#78716c] dark:text-[#d6d3d1]">
+          <div class="flex items-center space-x-2 truncate">
+            <i data-lucide="file-check" class="w-4 h-4 text-[#c29b38] flex-shrink-0"></i>
+            <span id="fileNameLabel" class="truncate font-medium">Document Loaded</span>
+            <span id="nudiBadge" class="hidden ml-2 px-2 py-0.5 text-[10px] bg-[#c29b38]/20 text-[#937121] dark:text-[#dfb758] rounded-full font-serif border border-[#c29b38]/30 font-medium">✦ Nudi 01 k converted to Unicode</span>
+          </div>
+          <button id="btnRemoveFile" class="text-xs text-[#78716c] hover:text-rose-500 ml-2 font-bold">&times;</button>
+        </div>
+
+        <!-- Nudi Conversion Toast Notice (Appears when Nudi text is detected & converted) -->
+        <div id="nudiToastNotice" class="hidden my-2 px-3.5 py-2 bg-[#f7f4ed] dark:bg-[#1f1c1a] border border-[#c29b38]/50 rounded-xl flex items-center justify-between text-xs text-[#937121] dark:text-[#dfb758] shadow-xs">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-[#c29b38] flex-shrink-0"></i>
+            <span class="font-medium font-editorial text-xs sm:text-sm">Nudi 01 k font text detected &amp; seamlessly converted into standard Kannada Unicode.</span>
+          </div>
+          <button id="btnCloseNudiNotice" class="text-sm text-[#78716c] hover:text-[#1c1917] dark:hover:text-white ml-2 font-bold">&times;</button>
+        </div>
+
+        <!-- Kannada Input Textarea -->
+        <div class="flex-1 relative mt-3">
+          <textarea 
+            id="kannadaInput" 
+            class="w-full h-full p-2 font-kannada text-base sm:text-lg bg-transparent text-[#1c1917] dark:text-[#f7f4ed] placeholder:text-[#a8a29e] dark:placeholder:text-[#57534e] resize-none outline-none focus:ring-0 leading-relaxed" 
+            placeholder="ಇಲ್ಲಿ ಕನ್ನಡ ಪಠ್ಯವನ್ನು ಬರೆಯಿರಿ, ಅಂಟಿಸಿ ಅಥವಾ PDF/Word ದಾಖಲೆಯನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ... (Write or paste Kannada script, or upload a PDF/Word file)..."></textarea>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="pt-3 border-t border-[#f2eee5] dark:border-[#221f1d] flex items-center justify-between">
+          <span id="inputCharCount" class="text-xs text-[#78716c] dark:text-[#78716c] font-editorial italic">
+            0 characters
+          </span>
+
+          <!-- Translate Button -->
+          <button 
+            id="btnTranslate" 
+            class="px-6 py-2.5 rounded-xl bg-[#1c1917] hover:bg-[#292524] dark:bg-[#c29b38] dark:hover:bg-[#dfb758] text-[#fcfbf9] dark:text-[#1c1917] font-serif font-semibold text-xs tracking-wider shadow-sm transition active:scale-95 flex items-center space-x-2">
+            <span>Translate Script</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT PANEL: TRANSLATED SCRIPT (CHOSEN LANGUAGE) -->
+      <div id="outputContainer" class="flex flex-col gap-6">
+
+        <!-- CARD: ENGLISH TRANSLATION -->
+        <div id="englishCard" class="bg-white dark:bg-[#181615] rounded-2xl shadow-sm border border-[#e7e3da] dark:border-[#2a2624] p-6 flex flex-col h-[520px] relative transition-all">
+          
+          <!-- Header -->
+          <div class="flex items-center justify-between pb-3 border-b border-[#f2eee5] dark:border-[#221f1d]">
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+              <h2 class="font-serif font-semibold text-sm tracking-wide text-[#1c1917] dark:text-[#f7f4ed]">
+                Translated Script (English)
+              </h2>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center space-x-1.5">
+              <button id="btnListenEnglish" class="p-1.5 rounded-lg text-[#78716c] hover:text-[#c29b38] hover:bg-[#f7f4ed] dark:hover:bg-[#1e1b19] transition" title="Listen (Voice Playback)">
+                <i data-lucide="volume-2" class="w-4 h-4"></i>
+              </button>
+              <button id="btnCopyEnglish" class="p-1.5 rounded-lg text-[#78716c] hover:text-[#c29b38] hover:bg-[#f7f4ed] dark:hover:bg-[#1e1b19] transition" title="Copy Translation">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+              </button>
+              <button id="btnDownloadEnglish" class="p-1.5 rounded-lg text-[#78716c] hover:text-[#c29b38] hover:bg-[#f7f4ed] dark:hover:bg-[#1e1b19] transition" title="Download Text">
+                <i data-lucide="download" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- English Output Editor -->
+          <div class="flex-1 relative mt-3 overflow-y-auto">
+            <div id="englishLoading" class="hidden absolute inset-0 bg-white/80 dark:bg-[#181615]/80 backdrop-blur-xs flex items-center justify-center z-10">
+              <div class="flex items-center space-x-2 text-[#c29b38] font-serif text-xs">
+                <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                <span>Translating into English...</span>
+              </div>
+            </div>
+            <div 
+              id="englishOutput" 
+              contenteditable="true" 
+              role="textbox"
+              aria-multiline="true"
+              class="rich-editor w-full h-full p-2 font-editorial text-lg sm:text-xl bg-transparent text-[#1c1917] dark:text-[#f7f4ed] outline-none leading-relaxed overflow-y-auto" 
+              data-placeholder="The English translated script will appear here..."></div>
+          </div>
+
+          <!-- Footer Status -->
+          <div class="pt-3 border-t border-[#f2eee5] dark:border-[#221f1d] flex items-center justify-between text-xs text-[#78716c] dark:text-[#78716c]">
+            <span id="enWordCount" class="font-editorial italic">0 words</span>
+            <span class="text-[11px] font-editorial italic text-[#a8a29e]">Editable</span>
+          </div>
+
+        </div>
+
+        <!-- CARD: HINDI TRANSLATION -->
+        <div id="hindiCard" class="hidden bg-white dark:bg-[#181615] rounded-2xl shadow-sm border border-[#e7e3da] dark:border-[#2a2624] p-6 flex flex-col h-[520px] relative transition-all">
+          
+          <!-- Header -->
+          <div class="flex items-center justify-between pb-3 border-b border-[#f2eee5] dark:border-[#221f1d]">
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+              <h2 class="font-serif font-semibold text-sm tracking-wide text-[#1c1917] dark:text-[#f7f4ed] font-hindi">
+                अनुवादित लिपि (हिन्दी अनुवाद)
+              </h2>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center space-x-1.5">
+              <button id="btnListenHindi" class="p-1.5 rounded-lg text-[#78716c] hover:text-[#c29b38] hover:bg-[#f7f4ed] dark:hover:bg-[#1e1b19] transition" title="Listen (Voice Playback)">
+                <i data-lucide="volume-2" class="w-4 h-4"></i>
+              </button>
+              <button id="btnCopyHindi" class="p-1.5 rounded-lg text-[#78716c] hover:text-[#c29b38] hover:bg-[#f7f4ed] dark:hover:bg-[#1e1b19] transition" title="Copy Translation">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+              </button>
+              <button id="btnDownloadHindi" class="p-1.5 rounded-lg text-[#78716c] hover:text-[#c29b38] hover:bg-[#f7f4ed] dark:hover:bg-[#1e1b19] transition" title="Download Text">
+                <i data-lucide="download" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Hindi Output Editor -->
+          <div class="flex-1 relative mt-3 overflow-y-auto">
+            <div id="hindiLoading" class="hidden absolute inset-0 bg-white/80 dark:bg-[#181615]/80 backdrop-blur-xs flex items-center justify-center z-10">
+              <div class="flex items-center space-x-2 text-[#c29b38] font-serif text-xs">
+                <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                <span>हिन्दी में अनुवाद हो रहा है...</span>
+              </div>
+            </div>
+            <div 
+              id="hindiOutput" 
+              contenteditable="true" 
+              role="textbox"
+              aria-multiline="true"
+              class="rich-editor w-full h-full p-2 font-hindi text-lg sm:text-xl bg-transparent text-[#1c1917] dark:text-[#f7f4ed] outline-none leading-relaxed overflow-y-auto" 
+              data-placeholder="यहाँ हिन्दी अनुवादित लिपि दिखाई देगी..."></div>
+          </div>
+
+          <!-- Footer Status -->
+          <div class="pt-3 border-t border-[#f2eee5] dark:border-[#221f1d] flex items-center justify-between text-xs text-[#78716c] dark:text-[#78716c]">
+            <span id="hiWordCount" class="font-editorial italic">0 words</span>
+            <span class="text-[11px] font-editorial italic text-[#a8a29e]">Editable</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- INTERACTIVE AI ASSISTANT CHATBOT -->
+    <div class="bg-white dark:bg-[#181615] rounded-2xl shadow-sm border border-[#e7e3da] dark:border-[#2a2624] p-6 flex flex-col gap-4">
+      
+      <!-- AI Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#f2eee5] dark:border-[#221f1d]">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-lg border border-[#c29b38]/40 bg-[#f7f4ed] dark:bg-[#1f1c1a] flex items-center justify-center text-[#c29b38]">
+            <i data-lucide="message-square" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-poetic font-semibold text-base text-[#1c1917] dark:text-[#f7f4ed]">
+              The Poetic Muse &amp; Literary Companion
+            </h3>
+            <p class="text-xs text-[#78716c] dark:text-[#a8a29e] font-editorial italic">
+              Converse with the assistant to enrich metaphors, adjust lyrical cadence, or refine phrasing.
+            </p>
+          </div>
+        </div>
+
+        <!-- Quick Interaction Chips -->
+        <div class="flex items-center flex-wrap gap-2">
+          <button data-action="tone_literary" class="ai-chip">
+            ✦ Lyrical &amp; Poetic
+          </button>
+          <button data-action="tone_formal" class="ai-chip">
+            Classical &amp; Dignified
+          </button>
+          <button data-action="tone_casual" class="ai-chip">
+            Conversational Grace
+          </button>
+          <button data-action="alternatives" class="ai-chip">
+            Alternative Verses
+          </button>
+          <button data-action="explain" class="ai-chip">
+            Linguistic Essence
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat History Box -->
+      <div id="aiChatBox" class="bg-[#fcfbf9] dark:bg-[#121110] rounded-xl p-4 min-h-[140px] max-h-[320px] overflow-y-auto flex flex-col gap-3 border border-[#f2eee5] dark:border-[#221f1d]">
+        <div class="ai-msg received">
+          <p class="text-xs text-[#78716c] dark:text-[#d6d3d1] leading-relaxed font-editorial text-sm">
+            Welcome to THEMI Writing. I am your editorial assistant. You can tell me to change words, adjust the tone, or alter the translated phrasing, and I will revise the script for you.
+          </p>
+        </div>
+      </div>
+
+      <!-- Chat Input Form -->
+      <form id="aiPromptForm" class="flex items-center gap-2">
+        <input 
+          type="text" 
+          id="aiInputText" 
+          class="flex-1 px-4 py-2.5 rounded-xl bg-[#f7f4ed] dark:bg-[#1c1917] border border-[#e7e3da] dark:border-[#2a2624] text-xs sm:text-sm text-[#1c1917] dark:text-[#f7f4ed] placeholder:text-[#a8a29e] dark:placeholder:text-[#57534e] focus:outline-none focus:border-[#c29b38]" 
+          placeholder="Ask the assistant to modify the translation, replace words, or refine phrasing...">
+        <button 
+          type="submit" 
+          id="btnSendAI" 
+          class="px-5 py-2.5 rounded-xl bg-[#1c1917] hover:bg-[#292524] dark:bg-[#c29b38] dark:hover:bg-[#dfb758] text-[#fcfbf9] dark:text-[#1c1917] text-xs font-serif font-semibold tracking-wider transition flex items-center space-x-1.5 shadow-sm">
+          <span>Send</span>
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+        </button>
+      </form>
+
+    </div>
+
+  </main>
+
+  <!-- TRANSLATION HISTORY DRAWER -->
+  <div id="historyDrawer" class="hidden fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white dark:bg-[#181615] shadow-2xl border-l border-[#e7e3da] dark:border-[#2a2624] p-6 flex flex-col gap-4 animate-in slide-in-from-right duration-200">
+    <div class="flex items-center justify-between pb-3 border-b border-[#f2eee5] dark:border-[#221f1d]">
+      <div class="flex items-center space-x-2">
+        <i data-lucide="history" class="w-4 h-4 text-[#c29b38]"></i>
+        <h3 class="font-serif font-semibold text-[#1c1917] dark:text-white text-base">Translation Archive</h3>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="btnClearHistory" class="text-xs text-rose-500 hover:underline">Clear</button>
+        <button id="btnCloseHistory" class="p-1 rounded-lg text-[#78716c] hover:text-[#1c1917] dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="historyList" class="flex-1 overflow-y-auto flex flex-col gap-2">
+      <div class="text-xs text-[#a8a29e] text-center py-8 font-editorial italic">No recent translations recorded.</div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/nudi_converter.js?v=2.1"></script>
+  <script src="/kannada_engine.js?v=2.1"></script>
+  <script src="app.js?v=2.1"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

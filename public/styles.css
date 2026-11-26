@@ -1,0 +1,186 @@
+/* THEMI Writing - Poetic Literary & Editorial Styles */
+
+/* Font Family Classes */
+.font-script {
+  font-family: 'Pinyon Script', cursive;
+}
+
+.font-poetic {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.font-editorial {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* Poetic Emblem Container Glow */
+.poetic-seal {
+  background: radial-gradient(circle at 35% 35%, rgba(223, 183, 88, 0.18), rgba(28, 25, 23, 0.95));
+  box-shadow: 0 4px 14px -2px rgba(194, 155, 56, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.poetic-seal:hover {
+  transform: scale(1.04) rotate(-2deg);
+  box-shadow: 0 6px 20px -2px rgba(194, 155, 56, 0.35);
+}
+
+/* Base font settings */
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Visual Italics for Protected Names & Places (No Asterisks) */
+.name-italic {
+  font-style: italic !important;
+  font-weight: 600;
+  color: #b45309; /* warm amber/bronze */
+  padding: 0 1px;
+}
+
+.dark .name-italic {
+  color: #dfb758; /* classic gold */
+}
+
+/* Rich Contenteditable Editor */
+.rich-editor:empty:before {
+  content: attr(data-placeholder);
+  color: #a8a29e;
+  font-style: italic;
+  pointer-events: none;
+}
+
+.dark .rich-editor:empty:before {
+  color: #57534e;
+}
+
+/* Language Selection Tabs */
+.lang-tab.active {
+  background-color: #ffffff;
+  color: #1c1917;
+  border-color: rgba(194, 155, 56, 0.4);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dark .lang-tab.active {
+  background-color: #292524;
+  color: #f5f2eb;
+  border-color: rgba(223, 183, 88, 0.4);
+}
+
+/* Drag and Drop Hover on Kannada Box */
+.drag-over {
+  border-color: #c29b38 !important;
+  background-color: rgba(247, 244, 237, 0.7) !important;
+}
+
+.dark .drag-over {
+  background-color: rgba(31, 28, 26, 0.7) !important;
+}
+
+/* AI Action Chips */
+.ai-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  background-color: #f7f4ed;
+  color: #57534e;
+  border: 1px solid #e7e3da;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.dark .ai-chip {
+  background-color: #1e1b19;
+  color: #d6d3d1;
+  border-color: #2a2624;
+}
+
+.ai-chip:hover {
+  background-color: #ece7db;
+  color: #1c1917;
+  border-color: #c29b38;
+  transform: translateY(-1px);
+}
+
+.dark .ai-chip:hover {
+  background-color: #2a2624;
+  color: #ffffff;
+  border-color: #dfb758;
+}
+
+/* AI Chat Message Bubbles */
+.ai-msg {
+  padding: 12px 16px;
+  border-radius: 14px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.ai-msg.received {
+  background-color: #ffffff;
+  border: 1px solid #e7e3da;
+  border-bottom-left-radius: 4px;
+}
+
+.dark .ai-msg.received {
+  background-color: #181615;
+  border-color: #2a2624;
+}
+
+.ai-msg.sent {
+  background-color: #1c1917;
+  color: #fcfbf9;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  max-width: 85%;
+}
+
+.dark .ai-msg.sent {
+  background-color: #c29b38;
+  color: #1c1917;
+}
+
+.ai-msg.sent p {
+  color: inherit !important;
+}
+
+/* Highlight flash animation when AI changes are applied */
+@keyframes highlightPulse {
+  0% { background-color: rgba(194, 155, 56, 0.25); }
+  100% { background-color: transparent; }
+}
+
+.highlight-update {
+  animation: highlightPulse 1.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom Smooth Editorial Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(168, 162, 158, 0.35);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 162, 158, 0.65);
+}

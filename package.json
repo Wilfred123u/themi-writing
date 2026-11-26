@@ -1,0 +1,21 @@
+{
+  "name": "themi-writing",
+  "version": "1.0.0",
+  "description": "THEMI Writing - Kannada to English & Hindi Intelligent Translator with Name Shield and Interactive AI Assistant",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "kannada",
+    "translator",
+    "english",
+    "hindi",
+    "ai",
+    "themi-writing",
+    "name-preservation"
+  ],
+  "author": "THEMI Writing Team",
+  "license": "MIT"
+}
